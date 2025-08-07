@@ -15,7 +15,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "terraformResourceGroupRosen" {
   name     = "${var.resource_group_name}-${random_integer.ri.result}"
-  location = "${var.resource_group_location}"
+  location = var.resource_group_location
 }
 
 resource "random_integer" "ri" {
@@ -57,13 +57,13 @@ resource "azurerm_mssql_server" "ams" {
   resource_group_name          = azurerm_resource_group.terraformResourceGroupRosen.name
   location                     = azurerm_resource_group.terraformResourceGroupRosen.location
   version                      = "12.0"
-  administrator_login          = "${var.sql_server_admin_login}"
-  administrator_login_password = "${var.sql_server_admin_password}"
+  administrator_login          = var.sql_server_admin_login
+  administrator_login_password = var.sql_server_admin_password
 }
 
 
 resource "azurerm_mssql_database" "amd" {
-  name         = "${var.sql_database_name}"
+  name         = var.sql_database_name
   server_id    = azurerm_mssql_server.ams.id
   collation    = "SQL_Latin1_General_CP1_CI_AS"
   license_type = "LicenseIncluded"
@@ -73,7 +73,7 @@ resource "azurerm_mssql_database" "amd" {
 }
 
 resource "azurerm_mssql_firewall_rule" "amfr" {
-  name             = "${var.firewall_rule_name}"
+  name             = var.firewall_rule_name
   server_id        = azurerm_mssql_server.ams.id
   start_ip_address = "0.0.0.0"
   end_ip_address   = "0.0.0.0"
@@ -81,7 +81,7 @@ resource "azurerm_mssql_firewall_rule" "amfr" {
 
 resource "azurerm_app_service_source_control" "aassc" {
   app_id                 = azurerm_linux_web_app.alwa.id
-  repo_url               = "${var.repo_URL}"
+  repo_url               = var.repo_URL
   branch                 = "main"
   use_manual_integration = true
 }
